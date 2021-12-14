@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
+import { FaCheckSquare, FaRegCheckCircle, FaSearch } from 'react-icons/fa'
+import Link from 'next/link'
 
-const Patients = () => {
+const ExistingPatient = () => {
   const [patients, setPatients] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,7 +21,7 @@ const Patients = () => {
     setLoading(false)
   }
   return (
-    <div className='mt-3'>
+    <div className=''>
       <form onSubmit={submitHandler}>
         <div className='input-group mb-3'>
           <input
@@ -32,10 +34,10 @@ const Patients = () => {
             aria-describedby='basic-addon2'
           />
           <button
-            className='input-group-text btn btn-primary shadow-none'
+            className='input-group-text btn btn-success shadow-none'
             id='basic-addon2'
           >
-            Search
+            <FaSearch className='mb-1' /> Search
           </button>
         </div>
       </form>
@@ -68,7 +70,12 @@ const Patients = () => {
                   </td>
                   <td>{patient.Tel}</td>
                   <td>
-                    <button className='btn btn-success btn-sm'>Select</button>
+                    <Link href={`/appointment/${patient.PatientID}`}>
+                      <a className='btn btn-success btn-sm  shadow-none'>
+                        {' '}
+                        <FaRegCheckCircle className='mb-1' /> Select{' '}
+                      </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -87,4 +94,4 @@ const Patients = () => {
   )
 }
 
-export default Patients
+export default ExistingPatient
