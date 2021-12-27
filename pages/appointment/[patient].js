@@ -10,7 +10,6 @@ const Appointment = () => {
 
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(false)
-  console.log(doctors)
 
   useEffect(() => {
     try {
@@ -24,7 +23,6 @@ const Appointment = () => {
     } catch (error) {
       setDoctors([])
       setLoading(false)
-      console.log(error.response.data)
     }
   }, [patient])
 
@@ -34,9 +32,9 @@ const Appointment = () => {
         <div className='text-center' style={{ fontSize: '200px' }}>
           <div className='spinner-border' role='status'></div>
         </div>
-      ) : doctors && doctors.length > 0 ? (
+      ) : doctors && doctors.total > 0 ? (
         <table className='table caption-top'>
-          <caption>{doctors && doctors.length} doctors were found!</caption>
+          <caption>{doctors && doctors.total} doctors were found!</caption>
           <thead>
             <tr>
               <th scope='col'>NAME</th>
@@ -47,7 +45,7 @@ const Appointment = () => {
           </thead>
           <tbody>
             {doctors &&
-              doctors.map((doctor, index) => (
+              doctors.doctors.map((doctor, index) => (
                 <tr key={index}>
                   <td>{doctor.Name}</td>
                   <td>{doctor.Specialization}</td>

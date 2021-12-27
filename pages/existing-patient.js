@@ -16,7 +16,6 @@ const ExistingPatient = () => {
       setPatients(await data)
     } catch (error) {
       setPatients([])
-      console.log(error.response.data)
     }
     setLoading(false)
   }
