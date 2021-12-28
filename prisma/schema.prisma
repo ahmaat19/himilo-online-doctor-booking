@@ -21,8 +21,9 @@ model DoctorAssignation {
   Tel         String?  @db.VarChar(50)
   Status      String?  @db.VarChar(50)
   BookingTel  String?  @db.VarChar(50)
+  ID          Int      @id(map: "PK_DOCTORASSIGNATION_ID") @unique(map: "AK_DOCTORASSIGNATION") @default(autoincrement())
 
-  @@ignore
+  @@index([ID], map: "ID")
 }
 
 model Doctors {
