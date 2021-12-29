@@ -1,177 +1,235 @@
+import axios from 'axios'
 import moment from 'moment'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { FaDollarSign } from 'react-icons/fa'
+import {
+  dynamicInputSelect,
+  inputNumber,
+  inputText,
+  staticInputSelect,
+} from '../utils/dynamicForm'
 
 const NewPatient = () => {
+  const [doctors, setDoctors] = useState([])
+  const [towns, setTowns] = useState([])
+  const [loading, setLoading] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {},
+  })
   const toDay = new Date()
+
+  useEffect(() => {
+    try {
+      const getDoctors = async () => {
+        setLoading(true)
+        const { data } = await axios.get(`/api/v1/doctors`)
+        setDoctors(await data)
+        setLoading(false)
+      }
+      getDoctors()
+    } catch (error) {
+      setDoctors([])
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    try {
+      const getTowns = async () => {
+        const { data } = await axios.get(`/api/v1/towns`)
+        setTowns(await data)
+      }
+      getTowns()
+    } catch (error) {
+      setTowns([])
+    }
+  }, [])
+
+  const selectedDoctor =
+    doctors &&
+    doctors.doctors &&
+    doctors.doctors.find((doc) => doc && doc.DoctorID === watch().Doctor)
+
+  const submitHandler = (data) => {
+    console.log({ data, doctor: selectedDoctor })
+    if (typeof window !== undefined)
+      alert(JSON.stringify({ data, doctor: selectedDoctor }))
+  }
+
   return (
-    <div className='row'>
-      <div className='col-md-4 col-12'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Patient Name
-          </label>
-          <input
-            type='text'
-            name='Name'
-            className='form-control'
-            id='name'
-            placeholder='Patient name'
-          />
+    <form onSubmit={handleSubmit(submitHandler)}>
+      {loading ? (
+        <div className='text-center' style={{ fontSize: '200px' }}>
+          <div className='spinner-border' role='status'></div>
         </div>
-      </div>
-      <div className='col-md-4 col-12'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Gender
-          </label>
-          <select
-            className='form-control'
-            id='name'
-            name='Gender'
-            placeholder='Patient name'
-          >
-            <option value=''>-----------</option>
-            <option value='Male'>Male</option>
-            <option value='Female'>Female</option>
-          </select>
+      ) : (
+        <div className='row'>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {inputText({
+              register,
+              errors,
+              label: 'Patient Name',
+              name: 'Name',
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {staticInputSelect({
+              register,
+              errors,
+              label: 'Gender',
+              name: 'Gender',
+              data: [{ name: 'Male' }, { name: 'Female' }],
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {inputNumber({
+              register,
+              errors,
+              label: 'Age',
+              name: 'Age',
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {staticInputSelect({
+              register,
+              errors,
+              label: 'Unit',
+              name: 'Unit',
+              data: [{ name: 'Years' }, { name: 'Months' }, { name: 'Days' }],
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {staticInputSelect({
+              register,
+              errors,
+              label: 'District',
+              name: 'District',
+              data: [
+                { name: 'Dharkeynley' },
+                { name: 'Daynile' },
+                { name: 'Waberi' },
+                { name: 'Shibis' },
+                { name: 'Hamar Jajab' },
+              ],
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {dynamicInputSelect({
+              register,
+              errors,
+              label: 'Town',
+              name: 'Town',
+              data: towns && towns,
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {inputNumber({
+              register,
+              errors,
+              label: 'Patient Mobile Number',
+              name: 'PatientMobile',
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {staticInputSelect({
+              register,
+              errors,
+              label: 'Status',
+              name: 'Status',
+              data: [
+                { name: 'Child' },
+                { name: 'Single' },
+                { name: 'Married' },
+              ],
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {staticInputSelect({
+              register,
+              errors,
+              label: 'Appointment Date',
+              name: 'appointment',
+              data: [
+                { name: moment(toDay).format('YYYY-MM-DD') },
+                {
+                  name: moment(toDay).add(1, 'days').format('YYYY-MM-DD'),
+                },
+              ],
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {dynamicInputSelect({
+              register,
+              errors,
+              label: 'Doctor',
+              name: 'Doctor',
+              data: doctors && doctors.doctors,
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            {inputNumber({
+              register,
+              errors,
+              label: 'Payment Mobile',
+              name: 'PaymentMobile',
+            })}
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            <button className='btn btn-primary btn-lg mt-4 form-control'>
+              <FaDollarSign className='mb-1' /> Pay Now
+            </button>
+          </div>
+          <hr />
+          <div className='col-lg-3 col-md-4 col-6'>
+            <div className='mb-3'>
+              <label htmlFor='DoctorNo'>Doctor No</label>
+              <input
+                className='form-control'
+                disabled
+                value={selectedDoctor && selectedDoctor.DoctorNo}
+              />
+            </div>
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            <div className='mb-3'>
+              <label htmlFor='Ticket Cost'>Ticket Cost</label>
+              <input
+                className='form-control'
+                disabled
+                value={selectedDoctor && selectedDoctor.Cost.toFixed(2)}
+              />
+            </div>
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            <div className='mb-3'>
+              <label htmlFor='Service Cost'>Service Cost</label>
+              <input className='form-control' disabled value={`1.00`} />
+            </div>
+          </div>
+          <div className='col-lg-3 col-md-4 col-6'>
+            <div className='mb-3'>
+              <label htmlFor='Total Cost'>Total Cost</label>
+              <input
+                className='form-control'
+                disabled
+                value={
+                  selectedDoctor &&
+                  (selectedDoctor && selectedDoctor.DoctorNo + 1).toFixed(2)
+                }
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      <div className='col-md-2 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Age
-          </label>
-          <input
-            type='Number'
-            name='Age'
-            className='form-control'
-            id='name'
-            placeholder='Age'
-          />
-        </div>
-      </div>
-      <div className='col-md-2 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Unit
-          </label>
-          <select
-            className='form-control'
-            name='Unit'
-            id='name'
-            placeholder='Age unit'
-          >
-            <option value=''>-----------</option>
-            <option value='Years'>Years</option>
-            <option value='Months'>Months</option>
-            <option value='Days'>Days</option>
-          </select>
-        </div>
-      </div>
-      <div className='col-md-3 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            District
-          </label>
-          <select
-            className='form-control'
-            name='District'
-            id='name'
-            placeholder='District'
-          >
-            <option value=''>-----------</option>
-            <option value='Dharkeynley'>Dharkeynley</option>
-            <option value='Wadajir'>Wadajir</option>
-            <option value='Waberi'>Waberi</option>
-          </select>
-        </div>
-      </div>
-      <div className='col-md-3 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Mobile Number
-          </label>
-          <input
-            type='Number'
-            name='Tel'
-            className='form-control'
-            id='name'
-            placeholder='Mobile number'
-          />
-        </div>
-      </div>
-      <div className='col-md-3 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Status
-          </label>
-          <select
-            className='form-control'
-            name='Status'
-            id='name'
-            placeholder='Status'
-          >
-            <option value=''>-----------</option>
-            <option value='Child'>Child</option>
-            <option value='Single'>Single</option>
-            <option value='Married'>Married</option>
-          </select>
-        </div>
-      </div>
-      <div className='col-md-3 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='mobile' className='form-label'>
-            Appointment Date
-          </label>
-          <select
-            type='number'
-            className='form-select'
-            id='mobile'
-            name='Appointment'
-          >
-            <option value=''>-----------</option>
-            <option value={moment(toDay).format('YYYY-MM-DD')}>
-              {moment(toDay).format('YYYY-MM-DD')}
-            </option>
-            <option value={moment(toDay).format('YYYY-MM-DD')}>
-              {moment(toDay).add(1, 'days').format('YYYY-MM-DD')}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div className='col-md-3 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Doctor
-          </label>
-          <select
-            className='form-control'
-            name='DoctorID'
-            id='name'
-            placeholder='Doctor'
-          >
-            <option value=''>-----------</option>
-            <option value='Ahmed'>Ahmed</option>
-            <option value='Ali'>Ali</option>
-            <option value='Hassan'>Hassan</option>
-          </select>
-        </div>
-      </div>
-      <div className='col-md-4 col-6'>
-        <div className='mb-3'>
-          <label htmlFor='mobile' className='form-label'>
-            Mobile Number
-          </label>
-          <input
-            type='number'
-            name='billingMobile'
-            className='form-control'
-            id='mobile'
-            placeholder='Enter your mobile number'
-          />
-        </div>
-      </div>
-    </div>
+      )}
+    </form>
   )
 }
 

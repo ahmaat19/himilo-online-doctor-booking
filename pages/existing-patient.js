@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { FaCheckSquare, FaRegCheckCircle, FaSearch } from 'react-icons/fa'
+import { useRouter } from 'next/router'
+import {
+  FaArrowAltCircleRight,
+  FaArrowCircleLeft,
+  FaCheckSquare,
+  FaRegCheckCircle,
+  FaSearch,
+} from 'react-icons/fa'
 import Link from 'next/link'
 
 const ExistingPatient = () => {
+  const router = useRouter()
   const [patients, setPatients] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
@@ -21,6 +29,12 @@ const ExistingPatient = () => {
   }
   return (
     <div className=''>
+      <button
+        onClick={() => router.back()}
+        className='btn btn-primary btn-sm rounded-pill mb-2'
+      >
+        <FaArrowCircleLeft className='mb-1' /> Go Back
+      </button>
       <form onSubmit={submitHandler}>
         <div className='input-group mb-3'>
           <input
@@ -33,7 +47,7 @@ const ExistingPatient = () => {
             aria-describedby='basic-addon2'
           />
           <button
-            className='input-group-text btn btn-success shadow-none'
+            className='input-group-text btn btn-primary shadow-none'
             id='basic-addon2'
           >
             <FaSearch className='mb-1' /> Search
@@ -46,7 +60,7 @@ const ExistingPatient = () => {
           <div className='spinner-border' role='status'></div>
         </div>
       ) : patients && patients.length > 0 ? (
-        <table className='table caption-top'>
+        <table className='table table-sm hover bordered table-striped caption-top'>
           <caption>{patients && patients.length} Patients were found!</caption>
           <thead>
             <tr>
@@ -70,9 +84,9 @@ const ExistingPatient = () => {
                   <td>{patient.Tel}</td>
                   <td>
                     <Link href={`/appointment/${patient.PatientID}`}>
-                      <a className='btn btn-success btn-sm  shadow-none'>
+                      <a className='btn btn-primary btn-sm  shadow-none'>
                         {' '}
-                        <FaRegCheckCircle className='mb-1' /> Select{' '}
+                        <FaArrowAltCircleRight className='mb-1' /> NEXT{' '}
                       </a>
                     </Link>
                   </td>

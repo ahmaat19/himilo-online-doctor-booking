@@ -4,10 +4,23 @@ import axios from 'axios'
 import { FaArrowCircleLeft, FaDollarSign } from 'react-icons/fa'
 import Link from 'next/link'
 import moment from 'moment'
-
+import { useForm } from 'react-hook-form'
+import {
+  dynamicInputSelect,
+  inputNumber,
+  staticInputSelect,
+} from '../../utils/dynamicForm'
 const CheckOut = () => {
   const router = useRouter()
-
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {},
+  })
   const [checkout, setCheckout] = useState({})
   const [loading, setLoading] = useState(false)
   const patientId =
@@ -37,6 +50,11 @@ const CheckOut = () => {
   const patient = checkout && checkout.patient && checkout.patient[0]
 
   const toDay = new Date()
+  const toUpper = (str) => str.charAt(0) + str.slice(1).toLowerCase()
+
+  const submitHandler = (data) => {
+    console.log({ data, patient, doctor })
+  }
 
   return (
     <>
@@ -48,8 +66,15 @@ const CheckOut = () => {
         patient &&
         doctor && (
           <>
-            <div className='row shadow mt-2'>
-              <div className='col-md-10 col-12 mx-auto p-3'>
+            <button
+              onClick={() => router.back()}
+              className='btn btn-primary btn-sm rounded-pill'
+            >
+              <FaArrowCircleLeft className='mb-1' /> Go Back
+            </button>
+
+            <div className='row shadow mt-2 rounded-3'>
+              <div className='col-12 mx-auto p-3'>
                 <hr />
                 <div className='row'>
                   <div className='col-md-6 col-12'>
@@ -58,7 +83,7 @@ const CheckOut = () => {
                   </div>
                   <div className='col-md-6 col-12'>
                     <span className='fw-bold'>Patient Name: </span>{' '}
-                    {patient.Name}
+                    {toUpper(patient.Name)}
                   </div>
 
                   <div className='col-md-6 col-12'>
@@ -88,64 +113,46 @@ const CheckOut = () => {
                 </div>
               </div>
             </div>
-            <div className='row mt-3'>
-              <div className='col-md-4 col-6'>
-                <div className='mb-3'>
-                  <label htmlFor='mobile' className='form-label'>
-                    Appointment Date
-                  </label>
-                  <select
-                    type='number'
-                    className='form-select'
-                    id='mobile'
-                    placeholder='Enter your mobile number'
+            <form onSubmit={handleSubmit(submitHandler)}>
+              <div className='row mt-3'>
+                <div className='col-md-4 col-6'>
+                  {staticInputSelect({
+                    register,
+                    errors,
+                    label: 'Appointment Date',
+                    name: 'appointment',
+                    data: [
+                      { name: moment(toDay).format('YYYY-MM-DD') },
+                      {
+                        name: moment(toDay).add(1, 'days').format('YYYY-MM-DD'),
+                      },
+                    ],
+                  })}
+                </div>
+                <div className='col-md-4 col-6'>
+                  {inputNumber({
+                    register,
+                    errors,
+                    label: 'Mobile Number',
+                    name: 'mobile',
+                  })}
+                </div>
+                <div className='col-md-4 col-12 mt-2'>
+                  <button
+                    onClick={() =>
+                      alert(
+                        `Your have paid $${(doctor.Cost + 1).toFixed(
+                          2
+                        )} for booking`
+                      )
+                    }
+                    className='btn btn-primary btn-lg mt-3 form-control'
                   >
-                    <option value=''>-----------</option>
-                    <option value={moment(toDay).format('YYYY-MM-DD')}>
-                      {moment(toDay).format('YYYY-MM-DD')}
-                    </option>
-                    <option value={moment(toDay).format('YYYY-MM-DD')}>
-                      {moment(toDay).add(1, 'days').format('YYYY-MM-DD')}
-                    </option>
-                  </select>
+                    <FaDollarSign className='mb-1' /> Pay Now
+                  </button>
                 </div>
               </div>
-              <div className='col-md-4 col-6'>
-                <div className='mb-3'>
-                  <label htmlFor='mobile' className='form-label'>
-                    Mobile Number
-                  </label>
-                  <input
-                    type='number'
-                    className='form-control'
-                    id='mobile'
-                    placeholder='Enter your mobile number'
-                  />
-                </div>
-              </div>
-              <div className='col-md-2 col-6 mt-2 '>
-                <button
-                  onClick={() =>
-                    alert(
-                      `Your have paid $${(doctor.Cost + 1).toFixed(
-                        2
-                      )} for booking`
-                    )
-                  }
-                  className='btn btn-dark btn sm mt-4 form-control'
-                >
-                  <FaDollarSign className='mb-1' /> Pay Now
-                </button>
-              </div>
-              <div className='col-md-2 col-6 mt-2 '>
-                <button
-                  onClick={() => router.back()}
-                  className='btn btn-secondary btn sm mt-4 form-control'
-                >
-                  <FaArrowCircleLeft className='mb-1' /> Go Back
-                </button>
-              </div>
-            </div>
+            </form>
           </>
         )
       )}

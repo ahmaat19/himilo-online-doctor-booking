@@ -73,37 +73,11 @@ handler.post(async (req, res) => {
         AddedBy,
       }
 
-      // console.log(data)
+      const assign = await prisma.doctorAssignation.createMant({
+        data: [data],
+      })
 
-      const pat = await prisma.$queryRaw(
-        Prisma.sql`INSERT INTO DoctorAssignation (PatientID,
-          DoctorID,
-          UserName,
-          PatientType,
-          Cost,
-          Tel,
-          BookingTel,
-          Status,
-          Date,
-          DateAdded,
-          AddedBy) VALUES (${PatientID},
-            ${DoctorID},
-            ${UserName},
-            ${PatientType},
-            ${doctor[0].Cost},
-            ${Tel},
-            ${BookingTel},
-            ${Status},
-           ${Date}, ${DateAdded},
-            ${AddedBy})`
-      )
-      console.log(pat)
-
-      // const patient = await prisma.town.create({
-      //   data,
-      // })
-
-      return res.status(200).json(pat)
+      return res.status(200).json(assign)
     } else {
       return res
         .status(404)
