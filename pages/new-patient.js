@@ -14,6 +14,7 @@ const NewPatient = () => {
   const [doctors, setDoctors] = useState([])
   const [towns, setTowns] = useState([])
   const [loading, setLoading] = useState(false)
+  const [loadingPost, setLoadingPost] = useState(false)
   const {
     register,
     handleSubmit,
@@ -59,9 +60,35 @@ const NewPatient = () => {
     doctors.doctors.find((doc) => doc && doc.DoctorID === watch().Doctor)
 
   const submitHandler = (data) => {
-    console.log({ data, doctor: selectedDoctor })
-    if (typeof window !== undefined)
-      alert(JSON.stringify({ data, doctor: selectedDoctor }))
+    setLoadingPost(true)
+
+    try {
+      const createNewTicket = async (obj) => {
+        const { data: post } = await axios.post(`/api/v1/patients/new`, obj)
+        typeof window !== undefined && alert(JSON.stringify(await post))
+        // reset()
+        console.log(await post)
+        setLoadingPost(false)
+      }
+
+      createNewTicket({
+        Name: data.Name,
+        Gender: data.Gender,
+        Age: data.Age,
+        DateUnit: data.Unit,
+        Town: data.Town,
+        Tel: data.PatientMobile,
+        BookingTel: data.PaymentMobile,
+        MaritalStatus: data.Status,
+        Status: 'New',
+        City: data.District,
+        Date: data.appointment,
+        AddedBy: 'Himilo',
+        DoctorID: selectedDoctor.DoctorID,
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -183,8 +210,17 @@ const NewPatient = () => {
             })}
           </div>
           <div className='col-lg-3 col-md-4 col-6'>
-            <button className='btn btn-primary btn-lg mt-4 form-control'>
-              <FaDollarSign className='mb-1' /> Pay Now
+            <button
+              disabled={loadingPost}
+              className='btn btn-primary btn-lg mt-4 form-control'
+            >
+              {loadingPost ? (
+                <span className='spinner-border spinner-border-sm' />
+              ) : (
+                <span>
+                  <FaDollarSign className='mb-1' /> Pay Now
+                </span>
+              )}
             </button>
           </div>
           <hr />

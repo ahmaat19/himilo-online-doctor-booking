@@ -2,20 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { FaArrowCircleLeft, FaDollarSign } from 'react-icons/fa'
-import Link from 'next/link'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
-import {
-  dynamicInputSelect,
-  inputNumber,
-  staticInputSelect,
-} from '../../utils/dynamicForm'
+import { inputNumber, staticInputSelect } from '../../utils/dynamicForm'
 const CheckOut = () => {
   const router = useRouter()
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm({
@@ -23,6 +17,7 @@ const CheckOut = () => {
   })
   const [checkout, setCheckout] = useState({})
   const [loading, setLoading] = useState(false)
+  const [loadingPost, setLoadingPost] = useState(false)
   const patientId =
     router.query && router.query.checkout && router.query.checkout[0]
   const doctorId =
@@ -53,7 +48,30 @@ const CheckOut = () => {
   const toUpper = (str) => str.charAt(0) + str.slice(1).toLowerCase()
 
   const submitHandler = (data) => {
-    console.log({ data, patient, doctor })
+    setLoadingPost(true)
+
+    try {
+      const createNewTicket = async (ticket) => {
+        const { data: post } = await axios.post(`/api/v1/patients`, ticket)
+        typeof window !== undefined && alert(JSON.stringify(await post))
+        reset()
+        setLoadingPost(false)
+      }
+
+      createNewTicket({
+        PatientID: patient.PatientID,
+        DoctorID: doctor.DoctorID,
+        UserName: 'Himilo',
+        PatientType: 'OutPatient',
+        Tel: patient.Tel,
+        BookingTel: data.mobile,
+        Status: 'Existing',
+        Date: data.appointment,
+        AddedBy: 'Himilo',
+      })
+    } catch (error) {
+      console.error(error.response)
+    }
   }
 
   return (
@@ -139,16 +157,16 @@ const CheckOut = () => {
                 </div>
                 <div className='col-md-4 col-12 mt-2'>
                   <button
-                    onClick={() =>
-                      alert(
-                        `Your have paid $${(doctor.Cost + 1).toFixed(
-                          2
-                        )} for booking`
-                      )
-                    }
+                    disabled={loadingPost}
                     className='btn btn-primary btn-lg mt-3 form-control'
                   >
-                    <FaDollarSign className='mb-1' /> Pay Now
+                    {loadingPost ? (
+                      <span className='spinner-border spinner-border-sm' />
+                    ) : (
+                      <span>
+                        <FaDollarSign className='mb-1' /> Pay Now
+                      </span>
+                    )}
                   </button>
                 </div>
               </div>

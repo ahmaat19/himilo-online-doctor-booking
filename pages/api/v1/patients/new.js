@@ -6,44 +6,21 @@ const prisma = new PrismaClient()
 
 const handler = nc()
 
-handler.get(async (req, res) => {
-  const search = req.query.search
-  if (search.length < 5)
-    return res.status(404).json({
-      status: 'Failed',
-      message: 'Search must be at least 5 characters long',
-    })
-
-  try {
-    const patient = await prisma.patients.findMany({
-      where: {
-        OR: [
-          {
-            PatientID: {
-              contains: search,
-            },
-          },
-          { Tel: { contains: search } },
-        ],
-      },
-    })
-    return res.status(200).json(patient)
-  } catch (error) {
-    throw new Error(error)
-  }
-})
-
 handler.post(async (req, res) => {
   const {
-    PatientID,
-    DoctorID,
-    UserName,
-    PatientType,
+    Name,
+    Gender,
+    Age,
+    DateUnit,
+    Town,
     Tel,
-    BookingTel,
+    MaritalStatus,
+    City,
     Status,
     Date: AppDate,
     AddedBy,
+    DoctorID,
+    BookingTel,
   } = req.body
 
   const doctor = await prisma.doctors.findMany({
@@ -57,11 +34,45 @@ handler.post(async (req, res) => {
 
   try {
     if (doctor.length > 0) {
+      const newPatient = {
+        PatientID: 'P999916',
+        Name,
+        Gender,
+        Age: Number(Age),
+        Town,
+        Tel,
+        MaritalStatus,
+        City,
+        DateUnit,
+        Date: moment(AppDate).format(),
+        DateAdded: new Date(),
+        AddedBy,
+      }
+
+      await prisma.patients.createMany({
+        data: [newPatient],
+      })
+      console.log(newPatient)
+
+      const pat = await prisma.patients.findMany({
+        where: {
+          Name,
+          Gender,
+          Age: Number(Age),
+          Town,
+          Tel,
+          MaritalStatus,
+          City,
+          DateUnit,
+          AddedBy,
+        },
+      })
+
       const data = {
-        PatientID,
+        PatientID: pat[0].PatientID,
         DoctorID,
-        UserName,
-        PatientType,
+        UserName: 'Samow',
+        PatientType: 'OutPatient',
         Tel,
         BookingTel,
         Cost: doctor[0].Cost,
@@ -82,6 +93,8 @@ handler.post(async (req, res) => {
         .json({ status: '404', message: 'Doctor not found' })
     }
   } catch (error) {
+    console.log(error)
+    res.send({ error })
     throw new Error(error)
   }
 })
