@@ -34,6 +34,7 @@ handler.get(async (req, res) => {
 })
 
 handler.post(async (req, res) => {
+  console.log(req.body)
   const {
     PatientID,
     DoctorID,
@@ -69,7 +70,7 @@ handler.post(async (req, res) => {
         Date: moment(AppDate).format(),
         DateAdded: new Date(),
       }
-
+      console.log(data)
       await prisma.doctorAssignation.createMany({
         data: [data],
       })
