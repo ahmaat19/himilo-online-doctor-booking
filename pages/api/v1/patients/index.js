@@ -41,7 +41,6 @@ handler.post(async (req, res) => {
     PatientType,
     Tel,
     BookingTel,
-    Status,
     Date: AppDate,
     AddedBy,
   } = req.body
@@ -65,7 +64,7 @@ handler.post(async (req, res) => {
         Tel,
         BookingTel,
         Cost: doctor[0].Cost,
-        Status,
+        Status: 'Existing',
         AddedBy,
         Date: moment(AppDate).format(),
         DateAdded: new Date(),

@@ -35,7 +35,7 @@ handler.post(async (req, res) => {
   try {
     if (doctor.length > 0) {
       const newPatient = {
-        PatientID: 'P999916',
+        PatientID: 'P999922',
         Name,
         Gender,
         Age: Number(Age),
@@ -52,7 +52,6 @@ handler.post(async (req, res) => {
       await prisma.patients.createMany({
         data: [newPatient],
       })
-      console.log(newPatient)
 
       const pat = await prisma.patients.findMany({
         where: {
@@ -67,7 +66,6 @@ handler.post(async (req, res) => {
           AddedBy,
         },
       })
-
       const data = {
         PatientID: pat[0].PatientID,
         DoctorID,
@@ -93,8 +91,6 @@ handler.post(async (req, res) => {
         .json({ status: '404', message: 'Doctor not found' })
     }
   } catch (error) {
-    console.log(error)
-    res.send({ error })
     throw new Error(error)
   }
 })

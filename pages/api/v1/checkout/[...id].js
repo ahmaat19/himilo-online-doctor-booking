@@ -26,12 +26,6 @@ export default handler.get(async (req, res) => {
       },
     })
 
-    // if (doctor.length === 0 || patient.length === 0)
-    //   return res.status(404).send({
-    //     status: '404',
-    //     message: 'We can not able to find what you are looking for!',
-    //   })
-
     return res.status(200).json({ doctor, patient })
   } catch (error) {
     throw new Error(error)
