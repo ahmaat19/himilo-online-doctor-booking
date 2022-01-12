@@ -10,18 +10,23 @@ const Appointment = () => {
 
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     try {
       const getDoctors = async () => {
         setLoading(true)
-        const { data } = await axios.get(`/api/v1/doctors`)
+        const { data } = await axios.get(
+          `https://hodb.herokuapp.com/api/v1/doctors`
+        )
         setDoctors(await data)
+        setError('')
         setLoading(false)
       }
       getDoctors()
     } catch (error) {
       setDoctors([])
+      setError(error.response.data.message)
       setLoading(false)
     }
   }, [patient])
@@ -71,12 +76,9 @@ const Appointment = () => {
           </tbody>
         </table>
       ) : (
-        doctors &&
-        doctors.length === 0 && (
-          <div className='text-center'>
-            <span className='text-danger'>No Doctors Found</span>
-          </div>
-        )
+        <div className='text-center'>
+          <span className='text-danger'>{error}</span>
+        </div>
       )}
     </div>
   )

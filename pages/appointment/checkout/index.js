@@ -4,7 +4,7 @@ import axios from 'axios'
 import { FaArrowCircleLeft, FaDollarSign } from 'react-icons/fa'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
-import { inputNumber, staticInputSelect } from '../../utils/dynamicForm'
+import { inputNumber, staticInputSelect } from '../../../utils/dynamicForm'
 const CheckOut = () => {
   const router = useRouter()
   const {
@@ -16,13 +16,10 @@ const CheckOut = () => {
     defaultValues: {},
   })
   const [checkout, setCheckout] = useState({})
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(false)
-  const patientId =
-    router.query && router.query.checkout && router.query.checkout[0]
-  const doctorId =
-    router.query && router.query.checkout && router.query.checkout[1]
+  const [error, setError] = useState('')
+  const doctorId = router.query && router.query.id
 
   useEffect(() => {
     const getCheckout = async () => {
@@ -31,24 +28,23 @@ const CheckOut = () => {
         `https://hodb.herokuapp.com/api/v1/doctors`
       )
       setCheckout(await data)
-      setError('')
       setLoading(false)
+      setError('')
     }
     try {
-      if (doctorId && patientId) getCheckout()
+      if (doctorId) getCheckout()
     } catch (error) {
       console.error(error.response.data)
       setCheckout([])
-      setError(error.response.data.message)
       setLoading(false)
+      setError(error.response.data.message)
     }
-  }, [patientId, doctorId])
+  }, [doctorId])
 
   const doctor =
     checkout &&
     checkout.doctors &&
-    checkout.doctors.find((doc) => doc.DoctorID === doctorId)
-  // const patient = checkout && checkout.patient && checkout.patient[0]
+    checkout.doctors.filter((doc) => doc.DoctorID === doctorId)
 
   const toDay = new Date()
   const toUpper = (str) => str.charAt(0) + str.slice(1).toLowerCase()
@@ -58,26 +54,28 @@ const CheckOut = () => {
 
     try {
       const createNewTicket = async (ticket) => {
-        const { data } = await axios.post(
+        const { data: post } = await axios.post(
           `https://hodb.herokuapp.com/api/v1/patients/existing`,
           ticket
         )
-        typeof window !== undefined && alert(JSON.stringify(await data))
+        typeof window !== undefined && alert(JSON.stringify(await post))
         reset()
         setLoadingPost(false)
-        setError('')
       }
 
       createNewTicket({
-        PatientID: patientId,
+        PatientID: patient.PatientID,
         DoctorID: doctor.DoctorID,
+        UserName: 'Himilo',
         PatientType: 'OutPatient',
+        Tel: patient.Tel,
         BookingTel: data.mobile,
-        Booked: 1,
+        Status: 'Existing',
+        Date: data.appointment,
+        AddedBy: 'Himilo',
       })
     } catch (error) {
-      setError(error.response.data.message)
-      console.error(error.response.data.message)
+      console.error(error.response)
     }
   }
 
@@ -101,17 +99,16 @@ const CheckOut = () => {
               <div className='col-12 mx-auto p-3'>
                 <hr />
                 <div className='row'>
-                  <div className='col-lg-4 col-12'>
-                    <span className='fw-bold'>Patient ID: </span>{' '}
-                    {patientId && patientId}
+                  <div className='col-md-6 col-12'>
+                    <span className='fw-bold'>Patient ID: </span> {patientId}
                   </div>
 
-                  <div className='col-lg-4 col-12'>
+                  <div className='col-md-6 col-12'>
+                    <span className='fw-bold'>Doctor Name: </span> {doctor.Name}
+                  </div>
+                  <div className='col-md-6 col-12'>
                     <span className='fw-bold'>Doctor Queue No: </span> #
                     {doctor.OnlineDoctorNo}
-                  </div>
-                  <div className='col-lg-4 col-12'>
-                    <span className='fw-bold'>Doctor Name: </span> {doctor.Name}
                   </div>
                 </div>
                 <hr />
@@ -173,10 +170,6 @@ const CheckOut = () => {
                 </div>
               </div>
             </form>
-
-            <div className='text-center'>
-              <span className='text-danger'>{error}</span>
-            </div>
           </>
         )
       )}

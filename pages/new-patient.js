@@ -15,6 +15,7 @@ const NewPatient = () => {
   const [towns, setTowns] = useState([])
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(false)
+  const [error, setError] = useState('')
   const {
     register,
     handleSubmit,
@@ -31,13 +32,17 @@ const NewPatient = () => {
     try {
       const getDoctors = async () => {
         setLoading(true)
-        const { data } = await axios.get(`/api/v1/doctors`)
+        const { data } = await axios.get(
+          `https://hodb.herokuapp.com/api/v1/doctors`
+        )
         setDoctors(await data)
+        setError('')
         setLoading(false)
       }
       getDoctors()
     } catch (error) {
       setDoctors([])
+      setError(error.response.data.message)
       setLoading(false)
     }
   }, [])
@@ -45,12 +50,16 @@ const NewPatient = () => {
   useEffect(() => {
     try {
       const getTowns = async () => {
-        const { data } = await axios.get(`/api/v1/towns`)
+        const { data } = await axios.get(
+          `https://hodb.herokuapp.com/api/v1/towns`
+        )
         setTowns(await data)
+        setError('')
       }
       getTowns()
     } catch (error) {
       setTowns([])
+      setError(error.response.data.message)
     }
   }, [])
 
@@ -64,11 +73,15 @@ const NewPatient = () => {
 
     try {
       const createNewTicket = async (obj) => {
-        const { data: post } = await axios.post(`/api/v1/patients/new`, obj)
+        const { data: post } = await axios.post(
+          `https://hodb.herokuapp.com/api/v1/patients/new`,
+          obj
+        )
         typeof window !== undefined && alert(JSON.stringify(await post))
         // reset()
         console.log(await post)
         setLoadingPost(false)
+        setError('')
       }
 
       createNewTicket({
@@ -77,17 +90,19 @@ const NewPatient = () => {
         Age: data.Age,
         DateUnit: data.Unit,
         Town: data.Town,
+        Address: 'Makka almukarama',
+        PatientType: 'OutPatient',
+        Booked: 1,
         Tel: data.PatientMobile,
         BookingTel: data.PaymentMobile,
         MaritalStatus: data.Status,
-        Status: 'New',
         City: data.District,
-        Date: data.appointment,
-        AddedBy: 'Himilo',
+        appointmentDate: data.appointment,
         DoctorID: selectedDoctor.DoctorID,
       })
     } catch (error) {
-      console.error(error)
+      setError(error.response.data.message)
+      console.error(error.response.data.message)
     }
   }
 
@@ -154,7 +169,7 @@ const NewPatient = () => {
               errors,
               label: 'Town',
               name: 'Town',
-              data: towns && towns,
+              data: towns && towns.towns,
             })}
           </div>
           <div className='col-lg-3 col-md-4 col-6'>
@@ -258,7 +273,7 @@ const NewPatient = () => {
                 disabled
                 value={
                   selectedDoctor &&
-                  (selectedDoctor && selectedDoctor.DoctorNo + 1).toFixed(2)
+                  (selectedDoctor && selectedDoctor.Cost + 1).toFixed(2)
                 }
               />
             </div>

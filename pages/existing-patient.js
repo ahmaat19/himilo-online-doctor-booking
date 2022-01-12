@@ -15,14 +15,20 @@ const ExistingPatient = () => {
   const [patients, setPatients] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
-      const { data } = await axios.get(`/api/v1/patients/?search=${search}`)
+      const { data } = await axios.get(
+        `https://hodb.herokuapp.com/api/v1/patients?search=${search}`
+      )
+      console.log(await data)
       setPatients(await data)
+      setError('')
     } catch (error) {
+      setError(error.response.data.message)
       setPatients([])
     }
     setLoading(false)
@@ -59,9 +65,9 @@ const ExistingPatient = () => {
         <div className='text-center' style={{ fontSize: '200px' }}>
           <div className='spinner-border' role='status'></div>
         </div>
-      ) : patients && patients.length > 0 ? (
+      ) : patients && patients.total > 0 ? (
         <table className='table table-sm hover bordered table-striped caption-top'>
-          <caption>{patients && patients.length} Patients were found!</caption>
+          <caption>{patients && patients.total} Patients were found!</caption>
           <thead>
             <tr>
               <th scope='col'>PATIENT ID</th>
@@ -73,14 +79,12 @@ const ExistingPatient = () => {
           </thead>
           <tbody>
             {patients &&
-              patients.map((patient, index) => (
+              patients.patients.map((patient, index) => (
                 <tr key={index}>
                   <td>{patient.PatientID}</td>
                   <td>{patient.Name}</td>
                   <td>{patient.Gender}</td>
-                  <td>
-                    {patient.Age} {patient.DateUnit}
-                  </td>
+                  <td>{patient.Age}</td>
                   <td>{patient.Tel}</td>
                   <td>
                     <Link href={`/appointment/${patient.PatientID}`}>
@@ -95,13 +99,9 @@ const ExistingPatient = () => {
           </tbody>
         </table>
       ) : (
-        patients &&
-        patients.length === 0 &&
-        search && (
-          <div className='text-center'>
-            <span className='text-danger'>No Patient Found</span>
-          </div>
-        )
+        <div className='text-center'>
+          <span className='text-danger'>{error}</span>
+        </div>
       )}
     </div>
   )

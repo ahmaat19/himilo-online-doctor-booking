@@ -7,7 +7,7 @@ export default function Home() {
       <div className='row mt-5 g-4'>
         <div className='col-md-5 col-12 mx-auto'>
           <div className='card shadow-lg'>
-            <FaUserPlus className='mb-1 card-img-top fs-1 text-primary' />
+            <FaUserPlus className='mb-1 card-img-top fs-1 custom-text-primary' />
             <div className='card-body text-center'>
               <h3 className='card-title display-6'>NEW PATIENT</h3>
               <p className='card-text text-muted'>
@@ -23,7 +23,7 @@ export default function Home() {
         </div>
         <div className='col-md-5 col-12 mx-auto'>
           <div className='card shadow-lg'>
-            <FaUser className='mb-1 card-img-top fs-1 text-primary' />
+            <FaUser className='mb-1 card-img-top fs-1 custom-text-primary' />
             <div className='card-body text-center'>
               <h3 className='card-title display-6'>EXISTED PATIENT</h3>
               <p className='card-text text-muted'>
