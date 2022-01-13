@@ -74,6 +74,7 @@ const ExistingPatient = () => {
               <th scope='col'>NAME</th>
               <th scope='col'>GENDER</th>
               <th scope='col'>AGE</th>
+              <th scope='col'>TEL</th>
               <th scope='col'>ACTION</th>
             </tr>
           </thead>
