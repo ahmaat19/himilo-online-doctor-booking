@@ -13,23 +13,32 @@ const Appointment = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    try {
-      const getDoctors = async () => {
-        setLoading(true)
-        const { data } = await axios.get(
-          `https://hodb.herokuapp.com/api/v1/doctors`
-        )
-        setDoctors(await data)
-        setError('')
-        setLoading(false)
-      }
-      getDoctors()
-    } catch (error) {
-      setDoctors([])
-      setError(error.response.data.message)
-      setLoading(false)
+    const getDoctors = async () => {
+      setLoading(true)
+      await axios
+        .get(`https://hodb.herokuapp.com/api/v1`)
+        .then((res) => {
+          setDoctors(res.data)
+          setError('')
+          setLoading(false)
+        })
+        .catch((error) => {
+          setDoctors([])
+          setError(error.response.data.message)
+          setLoading(false)
+        })
     }
+    getDoctors()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patient])
+
+  if (error)
+    return (
+      <div className='text-center'>
+        <span className='text-danger'>{error}</span>
+      </div>
+    )
 
   return (
     <div>

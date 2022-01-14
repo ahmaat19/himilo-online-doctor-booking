@@ -28,41 +28,45 @@ const NewPatient = () => {
   const toDay = new Date()
 
   useEffect(() => {
-    try {
-      const getDoctors = async () => {
-        setLoading(true)
-        const { data } = await axios.get(
-          `https://hodb.herokuapp.com/api/v1/doctors`
-        )
-        setDoctors(await data)
-        setError('')
-        setLoading(false)
-      }
-      getDoctors()
-    } catch (error) {
-      setDoctors([])
-      setError(error.response.data.message)
-      setLoading(false)
+    const getDoctors = async () => {
+      setLoading(true)
+      await axios
+        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
+        .then((res) => {
+          setDoctors(res.data)
+          setError('')
+          setLoading(false)
+        })
+        .catch((error) => {
+          setDoctors([])
+          setError(error.response.data.message)
+          setLoading(false)
+        })
     }
+    getDoctors()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    try {
+    const getTowns = async () => {
       setLoading(true)
-      const getTowns = async () => {
-        const { data } = await axios.get(
-          `https://hodb.herokuapp.com/api/v1/towns`
-        )
-        setTowns(await data)
-        setError('')
-        setLoading(false)
-      }
-      getTowns()
-    } catch (error) {
-      setTowns([])
-      setLoading(false)
-      setError(error.response.data.message)
+      await axios
+        .get(`https://hodb.herokuapp.com/api/v1/towns`)
+        .then((res) => {
+          setTowns(res.data)
+          setError('')
+          setLoading(false)
+        })
+        .catch((error) => {
+          setTowns([])
+          setError(error.response.data.message)
+          setLoading(false)
+        })
     }
+    getTowns()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const selectedDoctor =
@@ -107,14 +111,12 @@ const NewPatient = () => {
       console.error(error.response.data.message)
     }
   }
-  // if (error === '')
-  //   return (
-  //     <div className='text-center'>
-  //       <span className='text-danger'>
-  //         Fixing some issues, please try another time {error}
-  //       </span>
-  //     </div>
-  //   )
+  if (error)
+    return (
+      <div className='text-center'>
+        <span className='text-danger'>{error}</span>
+      </div>
+    )
 
   return (
     <form onSubmit={handleSubmit(submitHandler)}>

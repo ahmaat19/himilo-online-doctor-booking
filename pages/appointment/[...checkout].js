@@ -27,31 +27,36 @@ const CheckOut = () => {
   useEffect(() => {
     const getCheckout = async () => {
       setLoading(true)
-      const { data } = await axios.get(
-        `https://hodb.herokuapp.com/api/v1/doctors`
-      )
-      setCheckout(await data)
-      setError('')
-      setLoading(false)
+      await axios
+        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
+        .then((res) => {
+          setCheckout(res.data)
+          setError('')
+          setLoading(false)
+        })
+        .catch((error) => {
+          setCheckout([])
+          setError(error.response.data.message)
+          setLoading(false)
+        })
     }
-    try {
-      if (doctorId && patientId) getCheckout()
-    } catch (error) {
-      console.error(error.response.data)
-      setCheckout([])
-      setError(error.response.data.message)
-      setLoading(false)
-    }
+
+    if (doctorId && patientId) getCheckout()
   }, [patientId, doctorId])
 
   const doctor =
     checkout &&
     checkout.doctors &&
     checkout.doctors.find((doc) => doc.DoctorID === doctorId)
-  // const patient = checkout && checkout.patient && checkout.patient[0]
 
   const toDay = new Date()
-  const toUpper = (str) => str.charAt(0) + str.slice(1).toLowerCase()
+
+  if (error)
+    return (
+      <div className='text-center'>
+        <span className='text-danger'>{error}</span>
+      </div>
+    )
 
   const submitHandler = (data) => {
     setLoadingPost(true)
