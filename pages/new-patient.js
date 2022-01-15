@@ -79,15 +79,16 @@ const NewPatient = () => {
 
     try {
       const createNewTicket = async (obj) => {
-        const { data: post } = await axios.post(
-          `https://hodb.herokuapp.com/api/v1/patients/new`,
-          obj
-        )
-        typeof window !== undefined && alert(JSON.stringify(await post))
+        await axios
+          .post(`https://hodb.herokuapp.com/api/v1/patients/new`, obj)
+          .then((res) => {
+            typeof window !== undefined && alert(JSON.stringify(res.data))
+          })
+          .catch((error) => {
+            setError(error.response.data.message)
+            setLoadingPost(false)
+          })
         reset()
-        console.log(await post)
-        setLoadingPost(false)
-        setError('')
       }
 
       createNewTicket({
@@ -96,13 +97,12 @@ const NewPatient = () => {
         Age: data.Age,
         DateUnit: data.Unit,
         Town: data.Town,
-        Address: 'Makka almukarama',
         PatientType: 'OutPatient',
         Booked: 1,
         Tel: data.PatientMobile,
         BookingTel: data.PaymentMobile,
         MaritalStatus: data.Status,
-        City: data.District,
+        City: data.City,
         appointmentDate: data.appointment,
         DoctorID: selectedDoctor.DoctorID,
       })
@@ -164,15 +164,9 @@ const NewPatient = () => {
             {staticInputSelect({
               register,
               errors,
-              label: 'District',
-              name: 'District',
-              data: [
-                { name: 'Dharkeynley' },
-                { name: 'Daynile' },
-                { name: 'Waberi' },
-                { name: 'Shibis' },
-                { name: 'Hamar Jajab' },
-              ],
+              label: 'City',
+              name: 'City',
+              data: [{ name: 'Mogadishu' }],
             })}
           </div>
           <div className='col-lg-3 col-md-4 col-6'>

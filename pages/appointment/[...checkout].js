@@ -63,14 +63,16 @@ const CheckOut = () => {
 
     try {
       const createNewTicket = async (ticket) => {
-        const { data } = await axios.post(
-          `https://hodb.herokuapp.com/api/v1/patients/existing`,
-          ticket
-        )
-        typeof window !== undefined && alert(JSON.stringify(await data))
-        reset()
-        setLoadingPost(false)
-        setError('')
+        await axios
+          .post(`https://hodb.herokuapp.com/api/v1/patients/existing`, ticket)
+          .then((res) => {
+            typeof window !== undefined && alert(JSON.stringify(res.data))
+          })
+          .catch((error) => {
+            reset()
+            setLoadingPost(false)
+            setError(error.response.data.message)
+          })
       }
 
       createNewTicket({

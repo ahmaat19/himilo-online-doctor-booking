@@ -16,7 +16,7 @@ const Appointment = () => {
     const getDoctors = async () => {
       setLoading(true)
       await axios
-        .get(`https://hodb.herokuapp.com/api/v1`)
+        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
         .then((res) => {
           setDoctors(res.data)
           setError('')
