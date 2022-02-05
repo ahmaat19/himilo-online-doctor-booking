@@ -28,7 +28,9 @@ const CheckOut = () => {
     const getCheckout = async () => {
       setLoading(true)
       await axios
-        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
+        .get(
+          `http://api.himilobooking.com/api/v1/doctors?apiKey=api123456&hospital=test`
+        )
         .then((res) => {
           setCheckout(res.data)
           setError('')
@@ -64,9 +66,13 @@ const CheckOut = () => {
     try {
       const createNewTicket = async (ticket) => {
         await axios
-          .post(`https://hodb.herokuapp.com/api/v1/patients/existing`, ticket)
+          .post(
+            `http://api.himilobooking.com/api/v1/patients/existing?apiKey=api123456&hospital=test`,
+            ticket
+          )
           .then((res) => {
             typeof window !== undefined && alert(JSON.stringify(res.data))
+            setLoadingPost(false)
           })
           .catch((error) => {
             reset()

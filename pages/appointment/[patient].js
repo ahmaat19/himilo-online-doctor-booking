@@ -16,7 +16,9 @@ const Appointment = () => {
     const getDoctors = async () => {
       setLoading(true)
       await axios
-        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
+        .get(
+          `http://api.himilobooking.com/api/v1/doctors?apiKey=api123456&hospital=test`
+        )
         .then((res) => {
           setDoctors(res.data)
           setError('')

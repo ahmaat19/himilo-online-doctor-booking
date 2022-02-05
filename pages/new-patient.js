@@ -31,7 +31,9 @@ const NewPatient = () => {
     const getDoctors = async () => {
       setLoading(true)
       await axios
-        .get(`https://hodb.herokuapp.com/api/v1/doctors`)
+        .get(
+          `http://api.himilobooking.com/api/v1/doctors?apiKey=api123456&hospital=test`
+        )
         .then((res) => {
           setDoctors(res.data)
           setError('')
@@ -52,7 +54,9 @@ const NewPatient = () => {
     const getTowns = async () => {
       setLoading(true)
       await axios
-        .get(`https://hodb.herokuapp.com/api/v1/towns`)
+        .get(
+          `http://api.himilobooking.com/api/v1/towns?apiKey=api123456&hospital=test`
+        )
         .then((res) => {
           setTowns(res.data)
           setError('')
@@ -79,16 +83,23 @@ const NewPatient = () => {
 
     try {
       const createNewTicket = async (obj) => {
+        console.log(obj)
         await axios
-          .post(`https://hodb.herokuapp.com/api/v1/patients/new`, obj)
+          .post(
+            `http://api.himilobooking.com/api/v1/patients/new?apiKey=api123456&hospital=test`,
+            obj
+          )
           .then((res) => {
             typeof window !== undefined && alert(JSON.stringify(res.data))
+            console.log(res.data)
+            setLoadingPost(false)
+            setError('')
+            reset()
           })
           .catch((error) => {
             setError(error.response.data.message)
             setLoadingPost(false)
           })
-        reset()
       }
 
       createNewTicket({
@@ -103,7 +114,7 @@ const NewPatient = () => {
         BookingTel: data.PaymentMobile,
         MaritalStatus: data.Status,
         City: data.City,
-        appointmentDate: data.appointment,
+        AppointmentDate: data.appointment,
         DoctorID: selectedDoctor.DoctorID,
       })
     } catch (error) {
