@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+//himiloapihttp://himiloapihttp://himiloapiimport React, { useEffect, useState } from 'react'
+http: import { useRouter } from 'next/router'
 import axios from 'axios'
 import { FaArrowCircleLeft, FaDollarSign } from 'react-icons/fa'
 import moment from 'moment'
@@ -86,6 +86,7 @@ const CheckOut = () => {
         DoctorID: doctor.DoctorID,
         PatientType: 'OutPatient',
         BookingTel: data.mobile,
+        AppointmentDate: data.appointment,
         Booked: 1,
       })
     } catch (error) {
