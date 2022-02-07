@@ -1,5 +1,5 @@
-//himiloapihttp://himiloapihttp://himiloapiimport React, { useEffect, useState } from 'react'
-http: import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 import { FaArrowCircleLeft, FaBook } from 'react-icons/fa'
 import Link from 'next/link'
@@ -17,7 +17,7 @@ const Appointment = () => {
       setLoading(true)
       await axios
         .get(
-          `http://api.himilobooking.com/api/v1/doctors?apiKey=api123456&hospital=test`
+          `https://himiloapi.com/api/v1/doctors?apiKey=api123456&hospital=test`
         )
         .then((res) => {
           setDoctors(res.data)

@@ -1,5 +1,5 @@
-//himiloapihttp://himiloapihttp://himiloapiimport React, { useState } from 'react'
-http: import axios from 'axios'
+import React, { useState } from 'react'
+import axios from 'axios'
 import { useRouter } from 'next/router'
 import {
   FaArrowAltCircleRight,
@@ -22,7 +22,7 @@ const ExistingPatient = () => {
     setLoading(true)
     try {
       const { data } = await axios.get(
-        `http://api.himilobooking.com/api/v1/patients?search=${search}&apiKey=api123456&hospital=test`
+        `https://himiloapi.com/api/v1/patients?search=${search}&apiKey=api123456&hospital=test`
       )
       console.log(await data)
       setPatients(await data)
