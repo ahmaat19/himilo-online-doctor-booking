@@ -29,7 +29,7 @@ const CheckOut = () => {
       setLoading(true)
       await axios
         .get(
-          `https://himiloapi.com/api/v1/doctors?apiKey=api123456&hospital=test`
+          `https://himiloapi.com/api/v1/doctors?apiKey=apikey123456&hospital=test`
         )
         .then((res) => {
           setCheckout(res.data)
@@ -67,7 +67,7 @@ const CheckOut = () => {
       const createNewTicket = async (ticket) => {
         await axios
           .post(
-            `https://himiloapi.com/api/v1/patients/existing?apiKey=api123456&hospital=test`,
+            `https://himiloapi.com/api/v1/patients/existing?apiKey=apikey123456&hospital=test`,
             ticket
           )
           .then((res) => {

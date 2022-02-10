@@ -17,7 +17,7 @@ const Appointment = () => {
       setLoading(true)
       await axios
         .get(
-          `https://himiloapi.com/api/v1/doctors?apiKey=api123456&hospital=test`
+          `https://himiloapi.com/api/v1/doctors?apiKey=apikey123456&hospital=test`
         )
         .then((res) => {
           setDoctors(res.data)

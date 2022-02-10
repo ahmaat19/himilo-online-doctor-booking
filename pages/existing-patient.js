@@ -22,7 +22,7 @@ const ExistingPatient = () => {
     setLoading(true)
     try {
       const { data } = await axios.get(
-        `https://himiloapi.com/api/v1/patients?search=${search}&apiKey=api123456&hospital=test`
+        `https://himiloapi.com/api/v1/patients?search=${search}&apiKey=apikey123456&hospital=test`
       )
       console.log(await data)
       setPatients(await data)

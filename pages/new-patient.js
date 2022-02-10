@@ -32,7 +32,7 @@ const NewPatient = () => {
       setLoading(true)
       await axios
         .get(
-          `https://himiloapi.com/api/v1/doctors?apiKey=api123456&hospital=test`
+          `https://himiloapi.com/api/v1/doctors?apiKey=apikey123456&hospital=test`
         )
         .then((res) => {
           setDoctors(res.data)
@@ -55,7 +55,7 @@ const NewPatient = () => {
       setLoading(true)
       await axios
         .get(
-          `https://himiloapi.com/api/v1/towns?apiKey=api123456&hospital=test`
+          `https://himiloapi.com/api/v1/towns?apiKey=apikey123456&hospital=test`
         )
         .then((res) => {
           setTowns(res.data)
@@ -86,7 +86,7 @@ const NewPatient = () => {
         console.log(obj)
         await axios
           .post(
-            `https://himiloapi.com/api/v1/patients/new?apiKey=api123456&hospital=test`,
+            `https://himiloapi.com/api/v1/patients/new?apiKey=apikey123456&hospital=test`,
             obj
           )
           .then((res) => {
